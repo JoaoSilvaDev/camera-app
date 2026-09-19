@@ -8,9 +8,9 @@ end
 function love.update(dt) update.poll() end
 
 function love.draw()
-  love.graphics.print("Camera app v1.01", 10, 10)
+  love.graphics.print("Camera app v1", 10, 10)
   if update.available then
-    -- TODO: draw your "Update available?" dialog here
+    love.graphics.print("UPDATE AVAILABLE", 10, 30)
   end
 end
 
