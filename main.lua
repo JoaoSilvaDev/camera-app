@@ -33,7 +33,7 @@ local function drawPopup()
     return
   end
 
-  love.graphics.printf("Update available", box.x, box.y + 24, box.w, "center")
+  love.graphics.printf("Update available!", box.x, box.y + 24, box.w, "center")
   if update.error then
     love.graphics.setColor(1, 0.5, 0.5)
     love.graphics.printf("Update failed:\n" .. update.error, box.x + 10, box.y + 60, box.w - 20, "center")
@@ -62,7 +62,7 @@ end
 
 function love.draw()
   love.graphics.setColor(1, 1, 1)
-  love.graphics.print("Camera app v1", 10, 10)
+  love.graphics.print("Camera app v2", 10, 10)
   if state ~= "idle" then
     drawPopup()
     if state == "updating" then framesDrawn = framesDrawn + 1 end
