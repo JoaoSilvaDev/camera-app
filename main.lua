@@ -9,7 +9,7 @@ local checkBtn = { x = 190, y = 400, w = 260, h = 56 }
 local statusText = {
   idle = "",
   checking = "Checking for updates...",
-  uptodate = "Up to date",
+  uptodate = "Up to date!",
   available = "Update available",
   offline = "Couldn't reach GitHub",
 }
