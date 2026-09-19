@@ -42,8 +42,11 @@ local function drawPopup()
   drawButton(no, "No", { 0.6, 0.25, 0.25 })
 end
 
+local version = "unknown"
+
 function love.load()
   love.mouse.setVisible(false)
+  version = update.version()
   update.check()
 end
 
@@ -60,7 +63,7 @@ end
 
 function love.draw()
   love.graphics.setColor(1, 1, 1)
-  love.graphics.print("Camera app v2", 10, 10)
+  love.graphics.print("Camera app " .. version, 10, 10)
   if state ~= "idle" then
     drawPopup()
     if state == "updating" then framesDrawn = framesDrawn + 1 end

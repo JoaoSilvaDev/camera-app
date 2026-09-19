@@ -2,6 +2,14 @@ local M = { available = false, error = nil }
 local dir = love.filesystem.getSource()
 local channel = "update-result"
 
+-- short id of the commit currently checked out ("unknown" if not a git repo)
+function M.version()
+  local h = io.popen("cd '" .. dir .. "' && git rev-parse --short HEAD 2>/dev/null")
+  local out = h:read("*a"):gsub("%s+", "")
+  h:close()
+  return out ~= "" and out or "unknown"
+end
+
 function M.check()
   M.thread = love.thread.newThread("update_thread.lua")
   M.thread:start(dir, channel)
