@@ -4,6 +4,15 @@ local W, H = 640, 480
 local box = { x = 80, y = 130, w = 480, h = 220 }
 local yes = { x = 110, y = 270, w = 200, h = 60 }
 local no  = { x = 330, y = 270, w = 200, h = 60 }
+local checkBtn = { x = 190, y = 400, w = 260, h = 56 }
+
+local statusText = {
+  idle = "",
+  checking = "Checking for updates...",
+  uptodate = "Up to date",
+  available = "Update available",
+  offline = "Couldn't reach GitHub",
+}
 
 local state = "idle"  -- idle | prompt | updating
 local framesDrawn = 0
@@ -64,6 +73,10 @@ end
 function love.draw()
   love.graphics.setColor(1, 1, 1)
   love.graphics.print("Camera app " .. version, 10, 10)
+
+  love.graphics.printf(statusText[update.status] or "", 0, 370, W, "center")
+  drawButton(checkBtn, "Check for updates", { 0.25, 0.35, 0.6 })
+
   if state ~= "idle" then
     drawPopup()
     if state == "updating" then framesDrawn = framesDrawn + 1 end
@@ -71,6 +84,10 @@ function love.draw()
 end
 
 local function press(x, y)
+  if state == "idle" then
+    if hit(checkBtn, x, y) then update.check() end
+    return
+  end
   if state ~= "prompt" then return end
   if hit(yes, x, y) then
     update.error = nil
