@@ -5,6 +5,9 @@ local box = { x = 80, y = 130, w = 480, h = 220 }
 local yes = { x = 110, y = 270, w = 200, h = 60 }
 local no  = { x = 330, y = 270, w = 200, h = 60 }
 
+local debugText = "no input yet"  -- TEMP debug
+local lastPress = nil             -- TEMP debug
+
 local state = "idle"  -- idle | prompt | updating
 local framesDrawn = 0
 
@@ -67,10 +70,16 @@ function love.draw()
     drawPopup()
     if state == "updating" then framesDrawn = framesDrawn + 1 end
   end
+
+  -- TEMP debug: what input Love actually receives
+  love.graphics.setColor(1, 1, 0)
+  love.graphics.print(debugText, 10, H - 24)
+  if lastPress then
+    love.graphics.circle("line", lastPress.x, lastPress.y, 12)
+  end
 end
 
--- touch is delivered as a mouse press too, so this handles touch and mouse
-function love.mousepressed(x, y)
+local function press(x, y)
   if state ~= "prompt" then return end
   if hit(yes, x, y) then
     update.error = nil
@@ -81,4 +90,19 @@ function love.mousepressed(x, y)
     update.error = nil
     state = "idle"
   end
+end
+
+-- Love delivers a touch as touchpressed (coords normalized 0-1) and possibly
+-- as a mouse press too. press() ignores repeats because it checks the state.
+function love.mousepressed(x, y, button, istouch)
+  debugText = string.format("mouse %d,%d touch=%s", x, y, tostring(istouch))
+  lastPress = { x = x, y = y }
+  press(x, y)
+end
+
+function love.touchpressed(id, x, y)
+  local px, py = x * W, y * H
+  debugText = string.format("touch %.2f,%.2f -> %d,%d", x, y, px, py)
+  lastPress = { x = px, y = py }
+  press(px, py)
 end
