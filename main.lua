@@ -20,7 +20,6 @@ local function drawButton(r, label, color)
 end
 
 local function drawPopup()
-  -- dim the app behind the popup
   love.graphics.setColor(0, 0, 0, 0.7)
   love.graphics.rectangle("fill", 0, 0, W, H)
 
