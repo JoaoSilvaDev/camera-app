@@ -35,7 +35,6 @@ local function drawPopup()
     love.graphics.printf("Updating...", box.x, box.y + 90, box.w, "center")
     return
   end
-
   love.graphics.printf("Update available!", box.x, box.y + 24, box.w, "center")
   if update.error then
     love.graphics.setColor(1, 0.5, 0.5)
@@ -100,9 +99,21 @@ function love.mousepressed(x, y, button, istouch)
   press(x, y)
 end
 
+-- Raw touch values Love reports at the screen corners. Fill these in from the
+-- debug line: touch the top-left corner for xmin/ymin, bottom-right for xmax/ymax.
+-- If a direction is mirrored, swap its min and max; if X/Y are swapped, set swapxy.
+local touchCal = { xmin = 0, xmax = 1, ymin = 0, ymax = 1, swapxy = false }
+
+local function mapTouch(x, y)
+  if touchCal.swapxy then x, y = y, x end
+  local nx = (x - touchCal.xmin) / (touchCal.xmax - touchCal.xmin)
+  local ny = (y - touchCal.ymin) / (touchCal.ymax - touchCal.ymin)
+  return math.max(0, math.min(1, nx)) * W, math.max(0, math.min(1, ny)) * H
+end
+
 function love.touchpressed(id, x, y)
-  local px, py = x * W, y * H
-  debugText = string.format("touch %.2f,%.2f -> %d,%d", x, y, px, py)
+  local px, py = mapTouch(x, y)
+  debugText = string.format("touch raw %.2f,%.2f -> %d,%d", x, y, px, py)
   lastPress = { x = px, y = py }
   press(px, py)
 end
