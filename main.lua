@@ -91,29 +91,17 @@ local function press(x, y)
   end
 end
 
--- Love delivers a touch as touchpressed (coords normalized 0-1) and possibly
--- as a mouse press too. press() ignores repeats because it checks the state.
+-- On the Pi, Love reports touch coordinates in screen pixels (measured at the
+-- corners), so they go straight to press(). A touch may also arrive as a mouse
+-- press; press() ignores repeats because it checks the state.
 function love.mousepressed(x, y, button, istouch)
   debugText = string.format("mouse %d,%d touch=%s", x, y, tostring(istouch))
   lastPress = { x = x, y = y }
   press(x, y)
 end
 
--- Raw touch values Love reports at the screen corners. Fill these in from the
--- debug line: touch the top-left corner for xmin/ymin, bottom-right for xmax/ymax.
--- If a direction is mirrored, swap its min and max; if X/Y are swapped, set swapxy.
-local touchCal = { xmin = 0, xmax = 1, ymin = 0, ymax = 1, swapxy = false }
-
-local function mapTouch(x, y)
-  if touchCal.swapxy then x, y = y, x end
-  local nx = (x - touchCal.xmin) / (touchCal.xmax - touchCal.xmin)
-  local ny = (y - touchCal.ymin) / (touchCal.ymax - touchCal.ymin)
-  return math.max(0, math.min(1, nx)) * W, math.max(0, math.min(1, ny)) * H
-end
-
 function love.touchpressed(id, x, y)
-  local px, py = mapTouch(x, y)
-  debugText = string.format("touch raw %.2f,%.2f -> %d,%d", x, y, px, py)
-  lastPress = { x = px, y = py }
-  press(px, py)
+  debugText = string.format("touch %d,%d", x, y)
+  lastPress = { x = x, y = y }
+  press(x, y)
 end
